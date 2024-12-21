@@ -18,12 +18,12 @@ test('Validate JSON Schema', async ({ request }) => {
   // console.log(responseData);
 });
 
-test('Response not empty', async ({ request }) => {
+test('(GET) Response not empty', async ({ request }) => {
   const responseData = await fetchApiData(request, '/unknown');
   expect(responseData.data.length).toBeGreaterThan(0); 
 });
 
-test('Response data contains id, name, year, color, pantone_value', async ({ request }) => {
+test('(GET) Response data contains id, name, year, color, pantone_value', async ({ request }) => {
   const responseData = await fetchApiData(request, '/unknown');
   const resource = responseData.data[0];
 
@@ -34,7 +34,7 @@ test('Response data contains id, name, year, color, pantone_value', async ({ req
   expect(resource).toHaveProperty('pantone_value');
 });
 
-test('Response data contains correct page', async ({ request }) => {
+test('(GET) Response data contains correct page', async ({ request }) => {
   const responseData = await fetchApiData(request, '/unknown');
   const resource = responseData.page;
 
@@ -42,7 +42,7 @@ test('Response data contains correct page', async ({ request }) => {
   expect(resource).toBe(1);
 });
 
-test('Each color property has a valid hex value', async ({ request }) => {
+test('(GET) Each color property has a valid hex value', async ({ request }) => {
   const responseData = await fetchApiData(request, '/unknown');
   const hexColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
 
@@ -51,7 +51,7 @@ test('Each color property has a valid hex value', async ({ request }) => {
   });
 });
 
-test('id property should be unique', async ({ request }) => {
+test('(GET) id property should be unique', async ({ request }) => {
   const responseData = await fetchApiData(request, '/unknown');
   const ids = new Set();
 
@@ -61,7 +61,7 @@ test('id property should be unique', async ({ request }) => {
   });
 });
 
-test('year property should be a number', async ({ request }) => {
+test('(GET) year property should be a number', async ({ request }) => {
   const responseData = await fetchApiData(request, '/unknown');
 
   responseData.data.forEach(resource => {
@@ -69,7 +69,7 @@ test('year property should be a number', async ({ request }) => {
   });
 });
 
-test('name property should be a string', async ({ request }) => {
+test('(GET) name property should be a string', async ({ request }) => {
   const responseData = await fetchApiData(request, '/unknown');
 
   responseData.data.forEach(resource => {
@@ -77,12 +77,26 @@ test('name property should be a string', async ({ request }) => {
   });
 });
 
-test('pantone_value property should be a string', async ({ request }) => {
+test('(GET) pantone_value property should be a string', async ({ request }) => {
   const responseData = await fetchApiData(request, '/unknown');
 
   responseData.data.forEach(resource => {
     expect(typeof resource.pantone_value).toBe('string');
   });
+});
+
+test('(GET) endpoint /unknown/$id returns correct data', async ({ request }) => {
+  const responseData = await fetchApiData(request, '/unknown/2');
+  expect(responseData.data.id).toBe(2);
+  expect(responseData.data.name).toBe('fuchsia rose');
+  expect(responseData.data.year).toBe(2001);
+  expect(responseData.data.color).toBe('#C74375');
+  expect(responseData.data.pantone_value).toBe('17-2031');
+});
+
+test('(GET) non-existing id returns 404', async ({ request }) => {
+  const response = await request.get('https://reqres.in/api/unknown/23');
+  expect(response.status()).toBe(404);
 });
 
 
