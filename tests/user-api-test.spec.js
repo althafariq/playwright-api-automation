@@ -56,7 +56,7 @@ test('(GET) Response data id is integer', async ({ request }) => {
   expect(Number.isInteger(user.id)).toBe(true);
 });
 
-test('(GET) endpoint /users/$id returns correct data', async ({ request }) => {
+test('(GET) /users/$id returns correct data', async ({ request }) => {
   const responseData = await fetchApiData(request, '/users/2');
   expect(responseData.data.id).toBe(2);
   expect(responseData.data.email).toBe('janet.weaver@reqres.in');
@@ -65,7 +65,7 @@ test('(GET) endpoint /users/$id returns correct data', async ({ request }) => {
   expect(responseData.data.avatar).toBe('https://reqres.in/img/faces/2-image.jpg');
 });
 
-test('(POST) /users returns correct properties', async ({ request }) => {
+test('(POST) Create user success will returns correct properties', async ({ request }) => {
   const data = {
     name: 'morpheus',
     job: 'leader',
@@ -78,7 +78,36 @@ test('(POST) /users returns correct properties', async ({ request }) => {
   expect(responseData).toHaveProperty('createdAt');
 });
 
-test('(POST) /users returns correct data', async ({ request }) => {
+test('(POST) Validate JSON schema after successful create', async ({ request }) => {
+  const data = {
+    name: 'morpheus',
+    job: 'leader',
+  };
+
+  const responseData = await postApiData(request, '/users', data);
+
+  const schema =
+  {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string" },
+      "job": { "type": "string" },
+      "id": { "type": "string" },
+      "createdAt": { "type": "string" }
+    },
+    "required": ["name", "job", "id", "createdAt"]
+  }
+
+  const isValid = ajv.validate(schema, responseData);
+
+  if (!isValid) {
+    console.error('AJV validation failed:', ajv.errorsText());
+  }
+
+  expect(isValid).toBe(true);
+});
+
+test('(POST) Create user success will returns correct data', async ({ request }) => {
   const data = {
     name: 'morpheus',
     job: 'leader',
@@ -89,7 +118,7 @@ test('(POST) /users returns correct data', async ({ request }) => {
   expect(responseData.job).toBe(data.job);
 });
 
-test('(POST) /users returns correct createdAt format', async ({ request }) => {
+test('(POST) Create user success will return correct createdAt format', async ({ request }) => {
   const data = {
     name: 'morpheus',
     job: 'leader',
@@ -101,7 +130,7 @@ test('(POST) /users returns correct createdAt format', async ({ request }) => {
   expect(createdAt.toString()).not.toBe('Invalid Date');
 });
 
-test('(PUT) /users/$id returns correct data', async ({ request }) => {
+test('(PUT) /users/$id returns correct user data', async ({ request }) => {
   const data = {
     name: 'morpheus',
     job: 'leader',
@@ -117,6 +146,42 @@ test('(PUT) /users/$id returns correct data', async ({ request }) => {
   const updatedData = await updateApiData(request, `/users/${responseData.id}`, updateData);
   expect(updatedData.name).toBe(updateData.name);
   expect(updatedData.job).toBe(updateData.job);
+});
+
+
+test('(PUT) Validate JSON schema after successful update', async ({ request }) => {
+  const data = {
+    name: 'morpheus',
+    job: 'leader',
+  };
+
+  const responseData = await postApiData(request, '/users', data);
+
+  const updateData = {
+    name: 'morpheus',
+    job: 'zion resident',
+  };
+
+  const updatedData = await updateApiData(request, `/users/${responseData.id}`, updateData);
+
+  const schema = 
+  {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string" },
+      "job": { "type": "string" },
+      "updatedAt": { "type": "string" }
+    },
+    "required": ["name", "job", "updatedAt"]
+  }
+  
+  const isValid = ajv.validate(schema, updatedData);
+  
+  if (!isValid) {
+    console.error('AJV validation failed:', ajv.errorsText());
+  }
+
+  expect(isValid).toBe(true);
 });
 
 test('(PUT) /users/$id returns correct updatedAt format', async ({ request }) => {
