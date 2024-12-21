@@ -15,13 +15,13 @@ const successRegisterData = {
 };
 
 test('(POST) Successful login will return token in response', async ({ request }) => {
-  const responseData = await auth(request, '/login', successLoginData, true);
+  const responseData = await auth(request, '/login', successLoginData);
   expect(responseData.token).toBeTruthy();
 });
 
 
 test('Validate JSON Schema after successful login', async ({ request }) => {
-  const responseData = await auth(request, '/login', successLoginData, true);
+  const responseData = await auth(request, '/login', successLoginData);
 
   const schema = {
     type: 'object',
@@ -73,14 +73,14 @@ test('(POST) Blank password in login form will return error message', async ({ r
 });
 
 test('(POST) Successful register will return id and token in response', async ({ request }) => {
-  const responseData = await auth(request, '/register', successRegisterData, true);
+  const responseData = await auth(request, '/register', successRegisterData);
 
   expect(responseData.id).toBeTruthy();
   expect(responseData.token).toBeTruthy();
 });
 
 test('Validate JSON Schema after successful register', async ({ request }) => {
-  const responseData = await auth(request, '/register', successRegisterData, true);
+  const responseData = await auth(request, '/register', successRegisterData);
 
   const schema = {
     type: 'object',
