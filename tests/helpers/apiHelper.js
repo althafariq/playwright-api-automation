@@ -53,5 +53,49 @@ async function deleteApiData(request, endpoint) {
   expect(response.status()).toBe(204);
 }
 
+async function login(request, data, success = true) {
+  const response = await request.post(`${baseURL}/login`, {
+    data: data
+  });
 
-module.exports = { fetchApiData, postApiData, updateApiData, deleteApiData };
+  const responseBody = await response.json();
+
+  // Debug response details
+  console.log('Response:', responseBody);
+  console.log('Status:', response.status());
+
+  if (!success) {
+    expect(response.status()).toBe(400);
+    return responseBody;
+  }
+
+  expect(response.status()).toBe(200);
+    
+  // Validate response status
+  return responseBody;
+}
+
+async function register(request, data, success = true) {
+  const response = await request.post(`${baseURL}/register`, {
+    data: data
+  });
+
+  const responseBody = await response.json();
+
+  // Debug response details
+  console.log('Response:', responseBody);
+  console.log('Status:', response.status());
+
+  if (!success) {
+    expect(response.status()).toBe(400);
+    return responseBody;
+  }
+
+  expect(response.status()).toBe(200);
+    
+  // Validate response status
+  return responseBody;
+}
+
+
+module.exports = { fetchApiData, postApiData, updateApiData, deleteApiData, login, register};
