@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 const Ajv = require('ajv');
-const { login, register } = require('./helpers/apiHelper');
+const { auth } = require('./helpers/apiHelper');
 
 const ajv = new Ajv();
 
@@ -15,13 +15,13 @@ const successRegisterData = {
 };
 
 test('(POST) Successful login will return token in response', async ({ request }) => {
-  const responseData = await login(request, successLoginData, true);
+  const responseData = await auth(request, '/login', successLoginData, true);
   expect(responseData.token).toBeTruthy();
 });
 
 
 test('Validate JSON Schema after successful login', async ({ request }) => {
-  const responseData = await login(request, successLoginData, true);
+  const responseData = await auth(request, '/login', successLoginData, true);
 
   const schema = {
     type: 'object',
@@ -46,7 +46,7 @@ test('(POST) Invalid login will return error message', async ({ request }) => {
     password: 'invalidpassword',
   };
 
-  const response = await login(request, data, false);
+  const response = await auth(request, '/login', data, false);
   expect(response.error).toBe('user not found');
 });
 
@@ -56,7 +56,7 @@ test('(POST) Blank email in login form will return error message', async ({ requ
     password: 'cityslicka',
   };
 
-  const response = await login(request, data, false);
+  const response = await auth(request, '/login', data, false);
 
   expect(response.error).toBe('Missing email or username');
 });
@@ -67,20 +67,20 @@ test('(POST) Blank password in login form will return error message', async ({ r
     password: '',
   };
 
-  const response = await login(request, data, false);
+  const response = await auth(request, '/login', data, false);
 
   expect(response.error).toBe('Missing password');
 });
 
 test('(POST) Successful register will return id and token in response', async ({ request }) => {
-  const responseData = await register(request, successRegisterData, true);
+  const responseData = await auth(request, '/register', successRegisterData, true);
 
   expect(responseData.id).toBeTruthy();
   expect(responseData.token).toBeTruthy();
 });
 
 test('Validate JSON Schema after successful register', async ({ request }) => {
-  const responseData = await register(request, successRegisterData, true);
+  const responseData = await auth(request, '/register', successRegisterData, true);
 
   const schema = {
     type: 'object',
@@ -106,7 +106,7 @@ test('(POST) Invalid register will return error message', async ({ request }) =>
     password: 'invalidpaswword',
   };
 
-  const response = await register(request, data, false);
+  const response = await auth(request, '/register', data, false);
   expect(response.error).toBe('Note: Only defined users succeed registration');
 });
 
@@ -116,7 +116,7 @@ test('(POST) Blank email in register form will return error message', async ({ r
     password: 'pistol',
   };
 
-  const response = await register(request, data, false);
+  const response = await auth(request, '/register', data, false);
 
   expect(response.error).toBe('Missing email or username');
 }); 
@@ -127,7 +127,7 @@ test('(POST) Blank password in register form will return error message', async (
     password: '',
   };
 
-  const response = await register(request, data, false);
+  const response = await auth(request, '/register', data, false);
 
   expect(response.error).toBe('Missing password');
 });
