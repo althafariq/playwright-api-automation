@@ -85,13 +85,44 @@ test('(GET) pantone_value property should be a string', async ({ request }) => {
   });
 });
 
-test('(GET) endpoint /unknown/$id returns correct data', async ({ request }) => {
+test('(GET) /unknown/$id returns correct data', async ({ request }) => {
   const responseData = await fetchApiData(request, '/unknown/2');
   expect(responseData.data.id).toBe(2);
   expect(responseData.data.name).toBe('fuchsia rose');
   expect(responseData.data.year).toBe(2001);
   expect(responseData.data.color).toBe('#C74375');
   expect(responseData.data.pantone_value).toBe('17-2031');
+});
+
+test('(GET) Validate JSON Schema after fetching single resource', async ({ request }) => {
+  const responseData = await fetchApiData(request, '/unknown/2'); 
+
+  const schema = 
+  {
+    "type": "object",
+    "properties": {
+      "data": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number" },
+          "name": { "type": "string" },
+          "year": { "type": "number" },
+          "color": { "type": "string" },
+          "pantone_value": { "type": "string" }
+        },
+        "required": ["id", "name", "year", "color", "pantone_value"]
+      }
+    },
+    "required": ["data"]
+  };
+  
+  const isValid = ajv.validate(schema, responseData);
+
+  if (!isValid) {
+    console.error('AJV validation failed:', ajv.errorsText());
+  }
+
+  expect(isValid).toBe(true);
 });
 
 test('(GET) non-existing id returns 404', async ({ request }) => {
