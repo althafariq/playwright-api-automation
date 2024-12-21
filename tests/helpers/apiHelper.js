@@ -5,6 +5,7 @@ const baseURL = 'https://reqres.in/api';
 async function fetchApiData(request, endpoint) {
   const response = await request.get(`${baseURL}${endpoint}`);
   expect(response.status()).toBe(200);
+  console.log('Response:', response.status());
   return await response.json();
 }
 

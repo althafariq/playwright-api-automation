@@ -128,6 +128,7 @@ test('(GET) Validate JSON Schema after fetching single resource', async ({ reque
 test('(GET) non-existing id returns 404', async ({ request }) => {
   const response = await request.get('https://reqres.in/api/unknown/23');
   expect(response.status()).toBe(404);
+  console.log('Response:', response.status());
 });
 
 
