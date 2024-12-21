@@ -71,7 +71,7 @@ test('(POST) Create user success will returns correct properties', async ({ requ
     job: 'leader',
   };
 
-  const responseData = await postApiData(request, '/users', data);
+  const responseData = await postApiData(request, '/users', data, true);
   expect(responseData).toHaveProperty('name');
   expect(responseData).toHaveProperty('job');
   expect(responseData).toHaveProperty('id');
@@ -84,7 +84,7 @@ test('(POST) Validate JSON schema after successful create', async ({ request }) 
     job: 'leader',
   };
 
-  const responseData = await postApiData(request, '/users', data);
+  const responseData = await postApiData(request, '/users', data, true);
 
   const schema =
   {
@@ -113,7 +113,7 @@ test('(POST) Create user success will returns correct data', async ({ request })
     job: 'leader',
   };
 
-  const responseData = await postApiData(request, '/users', data);
+  const responseData = await postApiData(request, '/users', data, true);
   expect(responseData.name).toBe(data.name);
   expect(responseData.job).toBe(data.job);
 });
@@ -124,7 +124,7 @@ test('(POST) Create user success will return correct createdAt format', async ({
     job: 'leader',
   };
 
-  const responseData = await postApiData(request, '/users', data);
+  const responseData = await postApiData(request, '/users', data, true);
   const createdAt = new Date(responseData.createdAt);
 
   expect(createdAt.toString()).not.toBe('Invalid Date');
@@ -136,7 +136,7 @@ test('(PUT) /users/$id returns correct user data', async ({ request }) => {
     job: 'leader',
   };
 
-  const responseData = await postApiData(request, '/users', data);
+  const responseData = await postApiData(request, '/users', data, true);
 
   const updateData = {
     name: 'morpheus',
@@ -155,7 +155,7 @@ test('(PUT) Validate JSON schema after successful update', async ({ request }) =
     job: 'leader',
   };
 
-  const responseData = await postApiData(request, '/users', data);
+  const responseData = await postApiData(request, '/users', data, true);
 
   const updateData = {
     name: 'morpheus',
@@ -190,7 +190,7 @@ test('(PUT) /users/$id returns correct updatedAt format', async ({ request }) =>
     job: 'leader',
   };
 
-  const responseData = await postApiData(request, '/users', data);
+  const responseData = await postApiData(request, '/users', data, true);
 
   const updateData = {
     name: 'morpheus',
